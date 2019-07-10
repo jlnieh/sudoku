@@ -8,3 +8,18 @@ First we have to agree on some notation. A Sudoku puzzle is a grid of 81 squares
 
   A puzzle is solved if the squares in each unit are filled with a
   permutation of the digits 1 to 9.
+
+## Performances
+
+### Original Python version
+
+With Dimitri's modification and port to Python 3 on my PC,
+
+    C:\> sudoku.dim.py
+    All tests pass.
+    Solved 50 of 50 easy puzzles (avg 0.01 secs (199 Hz), max 0.01 secs).
+    Solved 95 of 95 hard puzzles (avg 0.02 secs (51 Hz), max 0.10 secs).
+    Solved 11 of 11 hardest puzzles (avg 0.01 secs (143 Hz), max 0.01 secs).
+    Solved 99 of 99 random puzzles (avg 0.01 secs (177 Hz), max 0.01 secs).
+
+### Golang version
