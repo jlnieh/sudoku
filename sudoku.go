@@ -1,5 +1,10 @@
 package sudoku
 
+import (
+	"fmt"
+	"strings"
+)
+
 // Solve Every Sudoku Puzzle
 //  See http://norvig.com/sudoku.html
 // Throughout this program we have:
@@ -11,19 +16,26 @@ package sudoku
 //   grid is a grid,e.g. 81 non-blank chars, e.g. starting with ".18...7...
 //   values is a dict of possible values, e.g. {"A1":"12349", "A2":"8", ...}
 
-import "fmt"
+type ValuesType map[string]string
 
 const (
+	// Digits are "123456789"
 	Digits = "123456789"
-	Rows   = "ABCDEFGHI"
-	Cols   = Digits
+	// Rows are "ABCDEFGHI"
+	Rows = "ABCDEFGHI"
+	// Cols are "123456789"
+	Cols = Digits
 )
 
 var (
-	Squares  []string
+	// Squares is the list of squares of Sudoku puzzle, e.g. ["A1", "A2", "A3"...]
+	Squares []string
+	// Unitlist is the list of units of Sudoku puzzle,  a collection of nine squares (column, row, or box) is a unit
 	Unitlist [][]string
-	Units    map[string][][]string
-	Peers    map[string][]string
+	// Units is a map of one square to the units that include the square
+	Units map[string][][]string
+	// Peers are the squares that share a unit
+	Peers map[string][]string
 )
 
 func cross(A, B string) []string {
@@ -93,4 +105,158 @@ func init() {
 	initUnitlist()
 	initUnits()
 	initPeers()
+}
+
+// ################ Parse a Grid ################
+func parseGrid(grid string) ValuesType {
+	values := make(ValuesType)
+	for _, s := range Squares {
+		values[s] = Digits
+	}
+
+	for s, d := range gridValues(grid) {
+		if strings.Contains(Digits, d) && (nil == assign(values, s, d)) {
+			return nil
+		}
+	}
+	return values
+}
+
+func gridValues(grid string) ValuesType {
+	ret := make(ValuesType)
+	chars := make([]string, 0, 81)
+	for _, c := range grid {
+		if (c >= '0' && c <= '9') || (c == '.') {
+			chars = append(chars, string(c))
+		}
+	}
+	if len(chars) != 81 {
+		panic("Length of the input grid is not correct!")
+	}
+	for i, c := range chars {
+		ret[Squares[i]] = string(c)
+	}
+	return ret
+}
+
+// Eliminate all the other values (except d) from values[s] and propagate.
+// Return values, except return False if a contradiction is detected.
+func assign(values ValuesType, s string, d string) ValuesType {
+	// fmt.Println("AI: ", s, d, values[s])
+	otherValues := strings.ReplaceAll(values[s], d, "")
+	for _, d2 := range otherValues {
+		if nil == eliminate(values, s, string(d2)) {
+			return nil
+		}
+	}
+	// fmt.Println("AO: ", s, d, values[s])
+	return values
+}
+
+// Eliminate d from values[s]; propagate when values or places <= 2.
+// Return values, except return False if a contradiction is detected.
+func eliminate(values ValuesType, s string, d string) ValuesType {
+	// fmt.Println("EI: ", s, d, values[s])
+	if !strings.Contains(values[s], d) {
+		// fmt.Println("Ea: ", s, d, values[s])
+		return values // Already eliminated
+	}
+	values[s] = strings.ReplaceAll(values[s], d, "")
+
+	// (1) If a square s is reduced to one value d2, then eliminate d2 from the peers.
+	if len(values[s]) == 0 {
+		return nil // Contradiction: removed last value
+	} else if len(values[s]) == 1 {
+		d2 := values[s]
+		for _, s2 := range Peers[s] {
+			if nil == eliminate(values, s2, d2) {
+				return nil
+			}
+		}
+		return values
+	}
+
+	// (2) If a unit u is reduced to only one place for a value d, then put it there.
+	for _, u := range Units[s] {
+		var dplaces []string
+		for _, s2 := range u {
+			if strings.Contains(values[s2], d) {
+				dplaces = append(dplaces, s2)
+			}
+		}
+		if len(dplaces) == 0 {
+			return nil
+		} else if (len(dplaces) == 1) && (len(values[dplaces[0]]) > 1) {
+			// fmt.Println("Eb: ", dplaces[0], d, values[dplaces[0]])
+			if nil == assign(values, dplaces[0], d) {
+				return nil
+			}
+		}
+	}
+
+	// fmt.Println("EO: ", s, d, values[s])
+	return values
+}
+
+func display(values ValuesType) {
+	width := 1
+	for _, s := range Squares {
+		if (1 + len(values[s])) > width {
+			width = 1 + len(values[s])
+		}
+	}
+	line := strings.Join([]string{strings.Repeat("-", width*3), strings.Repeat("-", width*3), strings.Repeat("-", width*3)}, "+")
+	for i, s := range Squares {
+		fmt.Print(values[s], strings.Repeat(" ", width-len(values[s])))
+		if ((i + 1) % 9) == 0 {
+			fmt.Println()
+			if (i == 26) || (i == 53) {
+				fmt.Println(line)
+			}
+		} else if ((i + 1) % 3) == 0 {
+			fmt.Print("|")
+		}
+	}
+}
+
+func solve(grid string) ValuesType {
+	return search(parseGrid(grid))
+}
+
+func duplicateValues(values ValuesType) ValuesType {
+	newValues := make(ValuesType)
+	for k, v := range values {
+		newValues[k] = v
+	}
+	return newValues
+}
+func search(values ValuesType) ValuesType {
+	if nil == values {
+		return nil
+	}
+
+	minLen := 10
+	minS := ""
+	isAllDone := true
+	for _, s := range Squares {
+		l := len(values[s])
+		if l > 1 {
+			isAllDone = false
+			if l < minLen {
+				minLen = l
+				minS = s
+			}
+		}
+	}
+	if isAllDone {
+		return values
+	}
+
+	for _, d := range values[minS] {
+		v := search(assign(duplicateValues(values), minS, string(d)))
+		if v != nil {
+			return v
+		}
+	}
+	return nil
 }
