@@ -38,3 +38,12 @@ The benchmark(RELEASE_0.9.6) with changing maps to one dimension slices, it enha
     BenchmarkSolveAll/hardest-4                   11           1000763 ns/op    (999Hz / 2.7x)
 
     BenchmarkSolveHardest/Hard01-4                 1        6983976900 ns/op    (6.98 secs / 3.8x)
+	
+## Build and Test
+
+Sample shell commands to run the tests and benchmarks of the Go package, sudoku.
+```go build
+   go test
+   go test -bench SolveAll
+   go test -bench SolveHardest
+```
