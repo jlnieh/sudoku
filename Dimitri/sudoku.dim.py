@@ -41,7 +41,7 @@ def test():
     assert peers['C2'] == set(['A2', 'B2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2',
                                'C1', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9',
                                'A1', 'A3', 'B1', 'B3'])
-    print 'All tests pass.'
+    print('All tests pass.')
 
 ################ Parse a Grid ################
 
@@ -103,9 +103,9 @@ def display(values):
     width = 1+max(len(values[s]) for s in squares)
     line = '+'.join(['-'*(width*3)]*3)
     for r in rows:
-        print ''.join(values[r+c].center(width)+('|' if c in '36' else '')
+        print(''.join(values[r+c].center(width)+('|' if c in '36' else ''))
                       for c in cols)
-        if r in 'CF': print line
+        if r in 'CF': print(line)
     print
 
 ################ Search ################
@@ -133,7 +133,7 @@ def some(seq):
 
 def from_file(filename, sep='\n'):
     "Parse a file into a list of strings, separated by sep."
-    return file(filename).read().strip().split(sep)
+    return open(filename).read().strip().split(sep)
 
 def shuffled(seq):
     "Return a randomly shuffled copy of the input sequence."
@@ -150,20 +150,20 @@ def solve_all(grids, name='', showif=0.0):
     When showif is a number of seconds, display puzzles that take longer.
     When showif is None, don't display any puzzles."""
     def time_solve(grid):
-        start = time.clock()
+        start = time.perf_counter()
         values = solve(grid)
-        t = time.clock()-start
+        t = time.perf_counter()-start
         ## Display puzzles that take long enough
         if showif is not None and t > showif:
             display(grid_values(grid))
             if values: display(values)
-            print '(%.2f seconds)\n' % t
+            print('(%.2f seconds)\n' % t)
         return (t, solved(values))
     times, results = zip(*[time_solve(grid) for grid in grids])
     N = len(grids)
     if N > 1:
-        print "Solved %d of %d %s puzzles (avg %.2f secs (%d Hz), max %.2f secs)." % (
-            sum(results), N, name, sum(times)/N, N/sum(times), max(times))
+        print("Solved %d of %d %s puzzles (avg %.2f secs (%d Hz), max %.2f secs)." % (
+            sum(results), N, name, sum(times)/N, N/sum(times), max(times)))
 
 def solved(values):
     "A puzzle is solved if each unit is a permutation of the digits 1 to 9."
