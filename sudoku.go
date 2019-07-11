@@ -16,26 +16,20 @@ import (
 //   grid is a grid,e.g. 81 non-blank chars, e.g. starting with ".18...7...
 //   values is a dict of possible values, e.g. {"A1":"12349", "A2":"8", ...}
 
+// ValuesType is the data type of current status of the grid of sudoku puzzle
 type ValuesType map[string]string
 
 const (
-	// Digits are "123456789"
-	Digits = "123456789"
-	// Rows are "ABCDEFGHI"
-	Rows = "ABCDEFGHI"
-	// Cols are "123456789"
-	Cols = Digits
+	digits = "123456789"
+	rows   = "ABCDEFGHI"
+	cols   = digits
 )
 
 var (
-	// Squares is the list of squares of Sudoku puzzle, e.g. ["A1", "A2", "A3"...]
-	Squares []string
-	// Unitlist is the list of units of Sudoku puzzle,  a collection of nine squares (column, row, or box) is a unit
-	Unitlist [][]string
-	// Units is a map of one square to the units that include the square
-	Units map[string][][]string
-	// Peers are the squares that share a unit
-	Peers map[string][]string
+	squares  []string
+	unitlist [][]string
+	units    map[string][][]string
+	peers    map[string][]string
 )
 
 func cross(A, B string) []string {
@@ -58,41 +52,41 @@ func stringInSlice(a string, list []string) bool {
 }
 
 func initUnitlist() {
-	Unitlist = make([][]string, 0, 27)
-	for _, c := range Cols {
-		Unitlist = append(Unitlist, cross(Rows, string(c)))
+	unitlist = make([][]string, 0, 27)
+	for _, c := range cols {
+		unitlist = append(unitlist, cross(rows, string(c)))
 	}
-	for _, r := range Rows {
-		Unitlist = append(Unitlist, cross(string(r), Cols))
+	for _, r := range rows {
+		unitlist = append(unitlist, cross(string(r), cols))
 	}
 
 	for _, rs := range []string{"ABC", "DEF", "GHI"} {
 		for _, cs := range []string{"123", "456", "789"} {
-			Unitlist = append(Unitlist, cross(rs, cs))
+			unitlist = append(unitlist, cross(rs, cs))
 		}
 	}
 }
 
 func initUnits() {
-	Units = make(map[string][][]string)
-	for _, s := range Squares {
-		Units[s] = make([][]string, 0, 3)
-		for _, u := range Unitlist {
+	units = make(map[string][][]string)
+	for _, s := range squares {
+		units[s] = make([][]string, 0, 3)
+		for _, u := range unitlist {
 			if stringInSlice(s, u) {
-				Units[s] = append(Units[s], u)
+				units[s] = append(units[s], u)
 			}
 		}
 	}
 }
 
 func initPeers() {
-	Peers = make(map[string][]string)
-	for _, s := range Squares {
-		Peers[s] = make([]string, 0, 20)
-		for _, u := range Units[s] {
+	peers = make(map[string][]string)
+	for _, s := range squares {
+		peers[s] = make([]string, 0, 20)
+		for _, u := range units[s] {
 			for _, e := range u {
-				if (e != s) && (!stringInSlice(e, Peers[s])) {
-					Peers[s] = append(Peers[s], e)
+				if (e != s) && (!stringInSlice(e, peers[s])) {
+					peers[s] = append(peers[s], e)
 				}
 			}
 		}
@@ -100,8 +94,8 @@ func initPeers() {
 }
 
 func init() {
-	fmt.Println("init in sudoku.go")
-	Squares = cross(Rows, Cols)
+	// fmt.Println("init in sudoku.go")
+	squares = cross(rows, cols)
 	initUnitlist()
 	initUnits()
 	initPeers()
@@ -110,12 +104,12 @@ func init() {
 // ################ Parse a Grid ################
 func parseGrid(grid string) ValuesType {
 	values := make(ValuesType)
-	for _, s := range Squares {
-		values[s] = Digits
+	for _, s := range squares {
+		values[s] = digits
 	}
 
 	for s, d := range gridValues(grid) {
-		if strings.Contains(Digits, d) && (nil == assign(values, s, d)) {
+		if strings.Contains(digits, d) && (nil == assign(values, s, d)) {
 			return nil
 		}
 	}
@@ -134,7 +128,7 @@ func gridValues(grid string) ValuesType {
 		panic("Length of the input grid is not correct!")
 	}
 	for i, c := range chars {
-		ret[Squares[i]] = string(c)
+		ret[squares[i]] = string(c)
 	}
 	return ret
 }
@@ -168,7 +162,7 @@ func eliminate(values ValuesType, s string, d string) ValuesType {
 		return nil // Contradiction: removed last value
 	} else if len(values[s]) == 1 {
 		d2 := values[s]
-		for _, s2 := range Peers[s] {
+		for _, s2 := range peers[s] {
 			if nil == eliminate(values, s2, d2) {
 				return nil
 			}
@@ -177,7 +171,7 @@ func eliminate(values ValuesType, s string, d string) ValuesType {
 	}
 
 	// (2) If a unit u is reduced to only one place for a value d, then put it there.
-	for _, u := range Units[s] {
+	for _, u := range units[s] {
 		var dplaces []string
 		for _, s2 := range u {
 			if strings.Contains(values[s2], d) {
@@ -198,32 +192,7 @@ func eliminate(values ValuesType, s string, d string) ValuesType {
 	return values
 }
 
-func display(values ValuesType) {
-	width := 1
-	for _, s := range Squares {
-		if (1 + len(values[s])) > width {
-			width = 1 + len(values[s])
-		}
-	}
-	line := strings.Join([]string{strings.Repeat("-", width*3), strings.Repeat("-", width*3), strings.Repeat("-", width*3)}, "+")
-	for i, s := range Squares {
-		fmt.Print(values[s], strings.Repeat(" ", width-len(values[s])))
-		if ((i + 1) % 9) == 0 {
-			fmt.Println()
-			if (i == 26) || (i == 53) {
-				fmt.Println(line)
-			}
-		} else if ((i + 1) % 3) == 0 {
-			fmt.Print("|")
-		}
-	}
-}
-
-func solve(grid string) ValuesType {
-	return search(parseGrid(grid))
-}
-
-func duplicateValues(values ValuesType) ValuesType {
+func copyValues(values ValuesType) ValuesType {
 	newValues := make(ValuesType)
 	for k, v := range values {
 		newValues[k] = v
@@ -238,7 +207,7 @@ func search(values ValuesType) ValuesType {
 	minLen := 10
 	minS := ""
 	isAllDone := true
-	for _, s := range Squares {
+	for _, s := range squares {
 		l := len(values[s])
 		if l > 1 {
 			isAllDone = false
@@ -253,10 +222,40 @@ func search(values ValuesType) ValuesType {
 	}
 
 	for _, d := range values[minS] {
-		v := search(assign(duplicateValues(values), minS, string(d)))
+		v := search(assign(copyValues(values), minS, string(d)))
 		if v != nil {
 			return v
 		}
 	}
 	return nil
+}
+
+// Solve the sudoku puzzle
+func Solve(grid string) ValuesType {
+	return search(parseGrid(grid))
+}
+
+// Display the 2-D sudoku puzzle
+func Display(values ValuesType) {
+	width := 1
+	for _, s := range squares {
+		if (1 + len(values[s])) > width {
+			width = 1 + len(values[s])
+		}
+	}
+	line := strings.Join([]string{strings.Repeat("-", width*3), strings.Repeat("-", width*3), strings.Repeat("-", width*3)}, "+")
+	for i, s := range squares {
+		fmt.Print(values[s])
+		if ((i + 1) % 9) == 0 {
+			fmt.Println()
+			if (i == 26) || (i == 53) {
+				fmt.Println(line)
+			}
+		} else {
+			fmt.Print(strings.Repeat(" ", width-len(values[s])))
+			if ((i + 1) % 3) == 0 {
+				fmt.Print("|")
+			}
+		}
+	}
 }

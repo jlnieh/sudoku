@@ -1,4 +1,4 @@
-# Solving Every Sudoku Puzzle 
+# Solving Every Sudoku Puzzle
 To learn the Go language, I setup one topic, Sudoku solver, as my first homework. After Googling, I found Dimitri's sudoku github project, https://github.com/dimitri/sudoku, and learned Peter Norvig's Python implementation in http://norvig.com/sudoku.html.
 
 
@@ -23,3 +23,9 @@ With Dimitri's modification and port to Python 3 on my PC,
     Solved 99 of 99 random puzzles (avg 0.01 secs (177 Hz), max 0.01 secs).
 
 ### Golang version
+
+The performance result of my first version, using the slices and maps of strings as Python with the same notation as Peter Norvig.
+
+	BenchmarkSolveAll/easy-4                      50           1921266 ns/op	(520Hz)
+	BenchmarkSolveAll/hard-4                      95           8290041 ns/op	(120Hz)
+	BenchmarkSolveAll/hardest-4                   11           2728909 ns/op	(366Hz)
