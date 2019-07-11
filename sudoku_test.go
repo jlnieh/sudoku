@@ -85,11 +85,10 @@ func TestParseGrid(t *testing.T) {
 
 func TestSolve(t *testing.T) {
 	values := Solve(grid2)
+	Display(values)
 	if !isSolved(values) {
 		t.Error("Failed to solve the test puzzle: Grid 02")
-		Display(values)
 	}
-	// Display(Solve(grid2))
 	// Output:
 	// Grid 02: solved
 	// 4 1 7 |3 6 9 |8 2 5

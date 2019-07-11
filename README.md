@@ -29,11 +29,13 @@ The performance result of my first version(RELEASE_0.9.0), using the slices and 
 	BenchmarkSolveAll/easy-4                      50           1921266 ns/op	(520Hz)
 	BenchmarkSolveAll/hard-4                      95           8290041 ns/op	(120Hz)
 	BenchmarkSolveAll/hardest-4                   11           2728909 ns/op	(366Hz)
-	
-The benchmark(RELEASE_0.9.5) with changing maps to one dimension slices, it enhanced about 2.7+ times
+
+	BenchmarkSolveHardest/Hard01-4                 1        26523877800 ns/op	(26.5 secs)
+
+The benchmark(RELEASE_0.9.6) with changing maps to one dimension slices, it enhanced about 2.7+ times
 
 	BenchmarkSolveAll/easy-4                      50            680506 ns/op	(1469Hz / 2.8x)
 	BenchmarkSolveAll/hard-4                      95           2327876 ns/op	(429Hz / 3.5x)
 	BenchmarkSolveAll/hardest-4                   11           1000763 ns/op	(999Hz / 2.7x)
-	
-	BenchmarkSolveHardest/Hard01-4                 1        6983976900 ns/op    (6.98 secs)
+
+	BenchmarkSolveHardest/Hard01-4                 1        6983976900 ns/op    (6.98 secs / 3.8x)
