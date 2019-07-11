@@ -8,8 +8,8 @@ import (
 // Solve Every Sudoku Puzzle
 //  See http://norvig.com/sudoku.html
 // Throughout this program we have:
-//   r is a row,    e.g. 0, 9, 18, ..., 72
-//   c is a column, e.g. 0~8
+//   r is a row
+//   c is a column
 //   s is a square, e.g. 0~80
 //   d is a digit,  e.g. "9"
 //   u is a unit,   e.g. [0,9,18,27,36,45,54,63,72]
