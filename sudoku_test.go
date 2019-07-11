@@ -46,17 +46,13 @@ func isSolved(values ValuesType) bool {
 
 func TestInit(t *testing.T) {
 	fmt.Println("Testing sudoku init...")
-	// fmt.Println(Digits)
-	// fmt.Println(Squares)
-	if len(squares) != 81 {
-		t.Errorf("len(Squares)==%d, want 81", len(squares))
-	}
-	// fmt.Println(Unitlist)
+
+	fmt.Println(unitlist)
 	if len(unitlist) != 27 {
 		t.Errorf("len(Unitlist)==%d, want 27", len(unitlist))
 	}
 
-	for _, s := range squares {
+	for s := 0; s < 81; s++ {
 		if len(units[s]) != 3 {
 			t.Errorf("len(Units[%v])==%d, want 3", s, len(units[s]))
 		}
@@ -64,8 +60,8 @@ func TestInit(t *testing.T) {
 			t.Errorf("len(Peers[%v])==%d, want 20", s, len(peers[s]))
 		}
 	}
-	fmt.Println("Units[C2] =", units["C2"])
-	fmt.Println("Peers[C2] =", peers["C2"])
+	fmt.Println("Units[C2(19)] =", units[19])
+	fmt.Println("Peers[C2(19)] =", peers[19])
 	fmt.Println("Testing sudoku done.")
 }
 
