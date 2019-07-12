@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sudoku Solver</title>
+</head>
+<body>
+    <h1>Sudoku</h1>
+    <form action="/solve" method="post" id="target">
+        <h3>Setup the puzzle here:</h3>
+        <div id="puzzle"></div>
+        <label for="puzzle">One digit(0-9) in one square of the puzzle; 0 or dot(.) also means empty.</label>
+
+        <h3>or, key in 81 digits:</h3>
+        <label for="grid">Use 0 or dot(.) means empty square.</label>
+        <input type="text" id="grid" name="grid" maxLength="81" size="81">
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="solution"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>

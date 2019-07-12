@@ -2,6 +2,7 @@ package sudoku
 
 import (
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -94,7 +95,11 @@ func parseGrid(grid string) ValuesType {
 		values[s] = digits
 	}
 
-	for s, d := range gridValues(grid) {
+	tmp := gridValues(grid)
+	if tmp == nil {
+		return nil
+	}
+	for s, d := range tmp {
 		if strings.Contains(digits, d) && (nil == assign(values, s, d)) {
 			return nil
 		}
@@ -103,7 +108,6 @@ func parseGrid(grid string) ValuesType {
 }
 
 func gridValues(grid string) ValuesType {
-	ret := make(ValuesType, 81)
 	chars := make([]string, 0, 81)
 	for _, c := range grid {
 		if (c >= '0' && c <= '9') || (c == '.') {
@@ -111,8 +115,11 @@ func gridValues(grid string) ValuesType {
 		}
 	}
 	if len(chars) != 81 {
-		panic("Length of the input grid is not correct!")
+		log.Printf("Length of the input grid(%d) is not correct!\n", len(chars))
+		return nil
 	}
+
+	ret := make(ValuesType, 81)
 	for i, c := range chars {
 		ret[i] = string(c)
 	}
