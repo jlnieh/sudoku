@@ -120,25 +120,6 @@ func ExampleDisplay() {
 	// 6 5 9 |8 3 7 |4 2 1
 }
 
-func BenchmarkSolveHardest(b *testing.B) {
-	benchmarks := []struct {
-		name string
-		grid string
-	}{
-		{"Hard01", hard1},
-		{"Hard02", hard2},
-	}
-	for _, bm := range benchmarks {
-		b.Run(bm.name, func(b *testing.B) {
-			values := Solve(bm.grid)
-			if !isSolved(values) {
-				b.Errorf("Failed to solve puzzle inside %s", bm.name)
-			}
-			b.N = 1
-		})
-	}
-}
-
 func BenchmarkSolveAll(b *testing.B) {
 	benchmarks := []struct {
 		name     string
@@ -148,6 +129,7 @@ func BenchmarkSolveAll(b *testing.B) {
 		{"easy", "../../Puzzles/easy50.txt", nil},
 		{"hard", "../../Puzzles/top95.txt", nil},
 		{"hardest", "../../Puzzles/hardest.txt", nil},
+		{"Hard01", "", []string{hard1}},
 	}
 
 	for _, bm := range benchmarks {
@@ -156,6 +138,7 @@ func BenchmarkSolveAll(b *testing.B) {
 			bm.grids, err = fromFile(bm.filename)
 			if err != nil {
 				b.Errorf("Failed to readlines from file(%s): %s", bm.filename, err)
+				continue
 			}
 		}
 
@@ -167,7 +150,6 @@ func BenchmarkSolveAll(b *testing.B) {
 				}
 			}
 			b.N = len(bm.grids)
-
 		})
 	}
 }
