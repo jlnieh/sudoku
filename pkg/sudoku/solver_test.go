@@ -145,9 +145,9 @@ func BenchmarkSolveAll(b *testing.B) {
 		filename string
 		grids    []string
 	}{
-		{"easy", "Puzzles/easy50.txt", nil},
-		{"hard", "Puzzles/top95.txt", nil},
-		{"hardest", "Puzzles/hardest.txt", nil},
+		{"easy", "../../Puzzles/easy50.txt", nil},
+		{"hard", "../../Puzzles/top95.txt", nil},
+		{"hardest", "../../Puzzles/hardest.txt", nil},
 	}
 
 	for _, bm := range benchmarks {
