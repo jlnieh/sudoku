@@ -18,8 +18,13 @@ func main() {
 	flag.StringVar(&listenAddr, "listen-addr", ":8080", "server listen address")
 	flag.Parse()
 
+	if flag.NArg() > 0 {
+		sudoku.Display(sudoku.Solve(flag.Arg(0)))
+		return
+	}
+
 	logger := log.New(os.Stdout, "http: ", log.LstdFlags)
-	logger.Println("Server is starting...")
+	logger.Printf("Server is starting (%s)...\n", listenAddr)
 
 	http.HandleFunc("/solve", func(w http.ResponseWriter, r *http.Request) {
 		result := struct {
