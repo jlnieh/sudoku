@@ -74,6 +74,9 @@ function splitintosquares(grid) {
 
 function generatevalues(i, v) {
     var grid = $("#grid").val();
+    if (grid.length < 81) {
+        grid += ".".repeat(81 - grid.length)
+    }
     if ((v > 0) && (v <= 9)) {
         grid = grid.substr(0, i) + v + grid.substr(i+1);
     }
