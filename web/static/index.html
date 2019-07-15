@@ -3,6 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <title>Sudoku Solver</title>
+<style>
+input.square {
+    text-align: center;
+    font-family: monospace;
+}
+#grid {
+    font-family: monospace;
+}
+#solution table tr td {
+    text-align: center;
+    font-family: monospace;
+}
+</style>
 </head>
 <body>
     <h1>Sudoku</h1>
@@ -12,8 +25,8 @@
         <label for="puzzle">One digit(0-9) in one square of the puzzle; 0 or dot(.) also means empty.</label>
 
         <h3>or, key in 81 digits:</h3>
-        <label for="grid">Use 0 or dot(.) means empty square.</label>
-        <input type="text" id="grid" name="grid" maxLength="81" size="81">
+        <label for="grid">Use 0 or dot(.) means empty square.</label><br>
+        <input type="text" id="grid" name="grid" maxLength="81" size="90">
         <input type="submit" value="Submit">
     </form>
 
