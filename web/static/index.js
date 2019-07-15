@@ -10,7 +10,7 @@ function drawEmptyPuzzle(){
                 htmlPuzzle += "<tr>\n";
                 for (var c = 0; c < 3; c++){
                     var id = (R*3 + r)*9 + (C*3 + c);
-                    htmlPuzzle += '<td><input type="text" class="square" maxlength="1" size="1" id="s' + id + '" value=""/></td>\n';
+                    htmlPuzzle += '<td><input type="text" class="square" maxlength="1" size="1" id="s' + id + '" tabindex="' + (id+1).toString() + '" value=""/></td>\n';
                 }
                 htmlPuzzle += "</tr>\n";
             }
@@ -49,6 +49,40 @@ function drawSolution(data){
     $("#solution").html(htmlPuzzle);
 }
 
+function splitintosquares(grid) {
+    var s = 0;
+    for (var i=0; i<grid.length; i++) {
+        var c = grid.charAt(i);
+        if ((c >= '1') && (c <= '9')) {
+            $("#s" + s).val(c);
+            s++;
+        }
+        else if ((c=='0') || (c == '.')) {
+            $("#s" + s).val('');
+            s++;
+        }
+        else {
+            continue;
+        }
+        if (s >= 81) break;
+    }
+    while (s < 81) {
+        $("#s" + s).val('');
+        s++;
+    }
+}
+
+function generatevalues(i, v) {
+    var grid = $("#grid").val();
+    if ((v > 0) && (v <= 9)) {
+        grid = grid.substr(0, i) + v + grid.substr(i+1);
+    }
+    else {
+        grid = grid.substr(0, i) + '.' + grid.substr(i+1);
+    }
+    $("#grid").val(grid);
+}
+
 $(document).ready(function(){
     drawEmptyPuzzle();
 
@@ -62,10 +96,14 @@ $(document).ready(function(){
             data: form.serialize(),
             success: function(data)
             {
-                drawSolution(data);
+                if (data.solved) {
+                    drawSolution(data.values);
+                } else {
+                    alert('Cannot solve the puzzle!')
+                }
             },
             error: function(xhr, error){
-                alert("Cannot solve the puzzle!");
+                alert("Something wrong to communicate with solver!");
                 console.debug(xhr); 
                 console.debug(error);
             }
@@ -73,8 +111,24 @@ $(document).ready(function(){
         e.preventDefault();
     });
 
-    $("#grid").change(function(e){
+    $("#grid").on('keyup change', function(){
         $("#solution").html('');
+        splitintosquares($(this).val());
     });
 
+    $(".square").on('keyup change', function(){
+        var id = parseInt($(this).attr('id').substr(1));
+        var vl = $(this).val();
+
+        $("#solution").html('');
+        generatevalues(id, vl);
+        if (vl.length == 1) {
+            if (id < 80) {
+                $("#s" + (id+1).toString()).focus().select();
+            }
+            else {
+                $("#grid").focus();
+            }
+        }
+    });
 });
