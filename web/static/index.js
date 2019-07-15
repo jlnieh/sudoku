@@ -96,7 +96,7 @@ $(document).ready(function(){
             data: form.serialize(),
             success: function(data)
             {
-                if (data.solved) {
+                if ((data.solved) && (data.values) && (data.values.length == 81)) {
                     drawSolution(data.values);
                 } else {
                     alert('Cannot solve the puzzle!')
