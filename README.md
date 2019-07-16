@@ -43,14 +43,14 @@ The benchmark(RELEASE_0.9.6) with changing maps to one dimension slices, it enha
 
 Sample shell commands to run the tests and benchmarks of the Go package, sudoku.
 ```
-   cd %GOPATH%\src\github.com\jlnieh\sudoku\pkg\sudoku
+   cd _Some_Folder_\sudoku\pkg\sudoku
    go build
    go test
    go test -bench SolveAll
 ```
 Sample shell commands to run the sudoku application
 ```
-   cd %GOPATH%\src\github.com\jlnieh\sudoku\cmd\sudoku
+   cd _Some_Folder_\sudoku
    go run main.go .....1...87.9..6..1.....9.3..16.8.3.........6..63.4.......5......4.2..98.59..7.21
    go run main.go -help
    go run main.go
