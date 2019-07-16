@@ -1,0 +1,2 @@
+ListenAddr: :8080
+WebpagePath: web/static/
