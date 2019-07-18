@@ -2,10 +2,10 @@ package sudoku
 
 import (
 	"bufio"
-	"fmt"
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 )
@@ -47,9 +47,9 @@ func isSolved(values ValuesType) bool {
 }
 
 func TestInit(t *testing.T) {
-	fmt.Println("Testing sudoku init...")
+	t.Logf("Testing sudoku init...")
 
-	fmt.Println(unitlist)
+	t.Log(unitlist)
 	if len(unitlist) != 27 {
 		t.Errorf("len(Unitlist)==%d, want 27", len(unitlist))
 	}
@@ -62,9 +62,28 @@ func TestInit(t *testing.T) {
 			t.Errorf("len(Peers[%v])==%d, want 20", s, len(peers[s]))
 		}
 	}
-	fmt.Println("Units[C2(19)] =", units[19])
-	fmt.Println("Peers[C2(19)] =", peers[19])
-	fmt.Println("Testing sudoku done.")
+
+	t.Log("Units[C2(19)] =", units[19])
+	unitC2 := [][]int{
+		{0, 1, 2, 9, 10, 11, 18, 19, 20},
+		{1, 10, 19, 28, 37, 46, 55, 64, 73},
+		{18, 19, 20, 21, 22, 23, 24, 25, 26},
+	}
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 9; j++ {
+			if units[19][i][j] != unitC2[i][j] {
+				t.Errorf("Units[19][%d][%d]==%d, want %d", i, j, units[19][i][j], unitC2[i][j])
+			}
+		}
+	}
+	t.Log("Peers[C2(19)] =", peers[19])
+	peerC2 := []int{0, 1, 2, 9, 10, 11, 18, 20, 28, 37, 46, 55, 64, 73, 21, 22, 23, 24, 25, 26}
+	for i := 0; i < 20; i++ {
+		if peers[19][i] != peerC2[i] {
+			t.Errorf("Peers[19][%d]==%d, want %d", i, peers[19][i], peerC2[i])
+		}
+	}
+	t.Logf("Testing sudoku done.")
 }
 
 const grid1 = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
@@ -73,40 +92,60 @@ const grid3 = ".....1...87.9..6..1.....9.3..16.8.3.........6..63.4.......5......
 const hard1 = ".....6....59.....82....8....45........3........6..3.54...325..6.................."
 const hard2 = ".....5.8....6.1.43..........1.5........1.6...3.......553.....61........4........."
 
-func TestParseGrid(t *testing.T) {
-	fmt.Println("Grid 01: input")
-	Display(gridValues(grid1))
-	fmt.Println("Grid 01: parsed")
-	Display(parseGrid(grid1))
+func TestGridValues(t *testing.T) {
+	values := gridValues(grid1)
+	if values == nil {
+		t.Error("Failed to convert grid into the puzzle: Grid 01")
+	}
+}
 
-	fmt.Println("Grid 02: input")
-	Display(gridValues(grid2))
-	fmt.Println("Grid 02: parsed")
+func ExampleGridValues() {
+	Display(gridValues(grid1))
+	// Output:
+	// 0 0 3 |0 2 0 |6 0 0
+	// 9 0 0 |3 0 5 |0 0 1
+	// 0 0 1 |8 0 6 |4 0 0
+	// ------+------+------
+	// 0 0 8 |1 0 2 |9 0 0
+	// 7 0 0 |0 0 0 |0 0 8
+	// 0 0 6 |7 0 8 |2 0 0
+	// ------+------+------
+	// 0 0 2 |6 0 9 |5 0 0
+	// 8 0 0 |2 0 3 |0 0 9
+	// 0 0 5 |0 1 0 |3 0 0
+}
+
+func TestParseGrid(t *testing.T) {
+	values := parseGrid(grid2)
+	if values == nil {
+		t.Error("Failed to parse the grid into the puzzle: Grid 02")
+	}
+}
+
+func ExampleParseGrid() {
 	Display(parseGrid(grid2))
+	// Output:
+	// 4       1679    12679   |139     2369    269     |8       1239    5
+	// 26789   3       1256789 |14589   24569   245689  |12679   1249    124679
+	// 2689    15689   125689  |7       234569  245689  |12369   12349   123469
+	// ------------------------+------------------------+------------------------
+	// 3789    2       15789   |3459    34579   4579    |13579   6       13789
+	// 3679    15679   15679   |359     8       25679   |4       12359   12379
+	// 36789   4       56789   |359     1       25679   |23579   23589   23789
+	// ------------------------+------------------------+------------------------
+	// 289     89      289     |6       459     3       |1259    7       12489
+	// 5       6789    3       |2       479     1       |69      489     4689
+	// 1       6789    4       |589     579     5789    |23569   23589   23689
 }
 
 func TestSolve(t *testing.T) {
-	values := Solve(grid2)
-	Display(values)
+	values := Solve(grid3)
 	if !isSolved(values) {
-		t.Error("Failed to solve the test puzzle: Grid 02")
+		t.Error("Failed to solve the test puzzle: Grid 03")
 	}
-	// Output:
-	// Grid 02: solved
-	// 4 1 7 |3 6 9 |8 2 5
-	// 6 3 2 |1 5 8 |9 4 7
-	// 9 5 8 |7 2 4 |3 1 6
-	// ------+------+------
-	// 8 2 5 |4 3 7 |1 6 9
-	// 7 9 1 |5 8 6 |4 3 2
-	// 3 4 6 |9 1 2 |7 5 8
-	// ------+------+------
-	// 2 8 9 |6 4 3 |5 7 1
-	// 5 7 3 |2 9 1 |6 8 4
-	// 1 6 4 |8 7 5 |2 9 3
 }
 
-func ExampleDisplay() {
+func ExampleSolve() {
 	Display(Solve(grid3))
 	// Output:
 	// 9 6 3 |2 8 1 |7 5 4
@@ -159,7 +198,6 @@ func BenchmarkSolveAll(b *testing.B) {
 }
 
 func randomPuzzle(N int) string {
-	// fmt.Println("RT: Go...")
 	values := make(ValuesType, 81)
 	for s := 0; s < 81; s++ {
 		values[s] = digits
@@ -171,7 +209,6 @@ func randomPuzzle(N int) string {
 			continue
 		}
 		d := string(values[s][rand.Intn(len(values[s]))])
-		// fmt.Printf("    {%d, \"%s\"},\n", s, d)
 		if nil == assign(values, s, d) {
 			break
 		}
@@ -193,35 +230,6 @@ func randomPuzzle(N int) string {
 	return randomPuzzle(N) // Give up and make a new puzzle
 }
 
-func BenchmarkRandomPuzzle(b *testing.B) {
-	if b.N < 10 || b.N > 100 {
-		b.N = 100
-	}
-	nFailed := 0
-	for i := 0; i < b.N; i++ {
-		// fmt.Printf("RandomPuzzle: %d...\n", i+1)
-		// Display(gridValues(v))
-		// Display(parseGrid(v))
-		// Display(Solve(v))
-
-		v := randomPuzzle(17)
-		if Solve(v) == nil {
-			nFailed++
-
-			fmt.Printf("Failed to solve the random puzzle: %s\n", v)
-			Display(gridValues(v))
-			if parseGrid(v) == nil {
-				panic("Test!")
-			}
-			Display(parseGrid(v))
-		}
-	}
-	if nFailed > 0 {
-		b.Errorf("Failed to solve %d of %d random puzzles!", nFailed, b.N)
-	}
-}
-
-/*
 func TestRandomPuzzle2(t *testing.T) {
 	const badGrid = "4..8.6.....9..3..4.............4........6......3..........35.......194373.....8.."
 	values := make(ValuesType, 81)
@@ -234,14 +242,14 @@ func TestRandomPuzzle2(t *testing.T) {
 		t.Error("Failed to create the puzzle by grid!")
 		return
 	}
-	Display(tmp)
 	for s, d := range tmp {
 		if strings.Contains(digits, d) && (nil == assign(values, s, d)) {
-			t.Errorf("Error to assin %s at %d square\n", d, s)
+			if (s != 78) || (d != "8") {
+				t.Errorf("Error to assign %s at %d square\n", d, s)
+			}
 			break
 		}
 	}
-	Display(values)
 }
 
 func TestRandomPuzzle3(t *testing.T) {
@@ -266,8 +274,7 @@ func TestRandomPuzzle3(t *testing.T) {
 		{68, "9"},
 		{14, "3"},
 	}
-
-	fmt.Println("RP3: Go...")
+	isErrorFound := false
 	values := make(ValuesType, 81)
 	for s := 0; s < 81; s++ {
 		values[s] = digits
@@ -277,11 +284,43 @@ func TestRandomPuzzle3(t *testing.T) {
 		if len(values[seed.s]) == 1 {
 			continue
 		}
-		fmt.Printf("RP: v[%d]=%s\n", seed.s, seed.d)
 		if nil == assign(values, seed.s, seed.d) {
-			panic("Test done!")
+			if (seed.s == 14) && (seed.d == "3") {
+				isErrorFound = true
+			}
+			break
 		}
-		Display(values)
+		// Display(values)
+	}
+	if !isErrorFound {
+		t.Error("Failed to detect the bad random puzzle!")
 	}
 }
-*/
+
+func BenchmarkRandomPuzzle(b *testing.B) {
+	if b.N < 10 {
+		b.N = 100
+	}
+	nFailed := 0
+	for i := 0; i < b.N; i++ {
+		v := randomPuzzle(17)
+		b.StopTimer()
+		r := Solve(v)
+		b.StartTimer()
+		if r == nil {
+			nFailed++
+
+			b.Logf("Failed to solve the random puzzle: %s\n", v)
+			// Display(gridValues(v))
+			r := parseGrid(v)
+			if r == nil {
+				b.Errorf("Failed to generate random puzzle, which is not able to be parsed!")
+			} else {
+				// Display(r)
+			}
+		}
+	}
+	if nFailed > 0 {
+		b.Logf("Failed to solve %d of total %d random puzzles!", nFailed, b.N)
+	}
+}
