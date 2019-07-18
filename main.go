@@ -89,7 +89,12 @@ func main() {
 	flag.Parse()
 
 	if flag.NArg() > 0 {
-		sudoku.Display(sudoku.Solve(flag.Arg(0)))
+		result := sudoku.Solve(flag.Arg(0))
+		if result == nil {
+			fmt.Println("Sorry! Cannot solve the puzzle!")
+		} else {
+			sudoku.Display(result)
+		}
 		return
 	}
 

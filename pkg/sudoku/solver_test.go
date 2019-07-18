@@ -3,9 +3,11 @@ package sudoku
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func fromFile(filename string) ([]string, error) {
@@ -130,6 +132,7 @@ func BenchmarkSolveAll(b *testing.B) {
 		{"hard", "../../Puzzles/top95.txt", nil},
 		{"hardest", "../../Puzzles/hardest.txt", nil},
 		{"Hard01", "", []string{hard1}},
+		// {"Hard02", "", []string{hard2}},
 	}
 
 	for _, bm := range benchmarks {
@@ -146,10 +149,139 @@ func BenchmarkSolveAll(b *testing.B) {
 			for _, grid := range bm.grids {
 				values := Solve(grid)
 				if !isSolved(values) {
-					b.Errorf("Failed to solve puzzle inside %s", bm.filename)
+					b.Errorf("Failed to solve puzzle inside %s", bm.name)
+					Display(gridValues(grid))
 				}
 			}
 			b.N = len(bm.grids)
 		})
 	}
 }
+
+func randomPuzzle(N int) string {
+	// fmt.Println("RT: Go...")
+	values := make(ValuesType, 81)
+	for s := 0; s < 81; s++ {
+		values[s] = digits
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	for s := rand.Intn(81); true; s = rand.Intn(81) {
+		if len(values[s]) == 1 {
+			continue
+		}
+		d := string(values[s][rand.Intn(len(values[s]))])
+		// fmt.Printf("    {%d, \"%s\"},\n", s, d)
+		if nil == assign(values, s, d) {
+			break
+		}
+
+		l := 0
+		ret := ""
+		for i := 0; i < 81; i++ {
+			if len(values[i]) == 1 {
+				l++
+				ret += values[i]
+			} else {
+				ret += "."
+			}
+		}
+		if l > N {
+			return ret
+		}
+	}
+	return randomPuzzle(N) // Give up and make a new puzzle
+}
+
+func BenchmarkRandomPuzzle(b *testing.B) {
+	if b.N < 10 || b.N > 100 {
+		b.N = 100
+	}
+	nFailed := 0
+	for i := 0; i < b.N; i++ {
+		// fmt.Printf("RandomPuzzle: %d...\n", i+1)
+		// Display(gridValues(v))
+		// Display(parseGrid(v))
+		// Display(Solve(v))
+
+		v := randomPuzzle(17)
+		if Solve(v) == nil {
+			nFailed++
+
+			fmt.Printf("Failed to solve the random puzzle: %s\n", v)
+			Display(gridValues(v))
+			if parseGrid(v) == nil {
+				panic("Test!")
+			}
+			Display(parseGrid(v))
+		}
+	}
+	if nFailed > 0 {
+		b.Errorf("Failed to solve %d of %d random puzzles!", nFailed, b.N)
+	}
+}
+
+/*
+func TestRandomPuzzle2(t *testing.T) {
+	const badGrid = "4..8.6.....9..3..4.............4........6......3..........35.......194373.....8.."
+	values := make(ValuesType, 81)
+	for s := 0; s < 81; s++ {
+		values[s] = digits
+	}
+
+	tmp := gridValues(badGrid)
+	if tmp == nil {
+		t.Error("Failed to create the puzzle by grid!")
+		return
+	}
+	Display(tmp)
+	for s, d := range tmp {
+		if strings.Contains(digits, d) && (nil == assign(values, s, d)) {
+			t.Errorf("Error to assin %s at %d square\n", d, s)
+			break
+		}
+	}
+	Display(values)
+}
+
+func TestRandomPuzzle3(t *testing.T) {
+	seeds := [16]struct {
+		s int
+		d string
+	}{
+		{47, "3"},
+		{40, "6"},
+		{72, "3"},
+		{17, "4"},
+		{31, "4"},
+		{78, "8"},
+		{5, "6"},
+		{67, "1"},
+		{71, "7"},
+		{3, "8"},
+		{59, "5"},
+		{69, "4"},
+		{11, "9"},
+		{0, "4"},
+		{68, "9"},
+		{14, "3"},
+	}
+
+	fmt.Println("RP3: Go...")
+	values := make(ValuesType, 81)
+	for s := 0; s < 81; s++ {
+		values[s] = digits
+	}
+
+	for _, seed := range seeds {
+		if len(values[seed.s]) == 1 {
+			continue
+		}
+		fmt.Printf("RP: v[%d]=%s\n", seed.s, seed.d)
+		if nil == assign(values, seed.s, seed.d) {
+			panic("Test done!")
+		}
+		Display(values)
+	}
+}
+*/

@@ -156,7 +156,6 @@ func eliminate(values ValuesType, s int, d string) ValuesType {
 				return nil
 			}
 		}
-		return values
 	}
 
 	// (2) If a unit u is reduced to only one place for a value d, then put it there.
@@ -224,6 +223,11 @@ func Solve(grid string) ValuesType {
 
 // Display the 2-D sudoku puzzle
 func Display(values ValuesType) {
+	if nil == values {
+		fmt.Println("Not a valid puzzle!")
+		return
+	}
+
 	width := 1
 	for s := 0; s < 81; s++ {
 		if (1 + len(values[s])) > width {
