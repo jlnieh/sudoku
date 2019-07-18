@@ -93,14 +93,14 @@ const hard1 = ".....6....59.....82....8....45........3........6..3.54...325..6..
 const hard2 = ".....5.8....6.1.43..........1.5........1.6...3.......553.....61........4........."
 
 func TestGridValues(t *testing.T) {
-	values := gridValues(grid1)
+	values := GridValues(grid1)
 	if values == nil {
 		t.Error("Failed to convert grid into the puzzle: Grid 01")
 	}
 }
 
 func ExampleGridValues() {
-	Display(gridValues(grid1))
+	Display(GridValues(grid1))
 	// Output:
 	// 0 0 3 |0 2 0 |6 0 0
 	// 9 0 0 |3 0 5 |0 0 1
@@ -116,14 +116,14 @@ func ExampleGridValues() {
 }
 
 func TestParseGrid(t *testing.T) {
-	values := parseGrid(grid2)
+	values := ParseGrid(grid2)
 	if values == nil {
 		t.Error("Failed to parse the grid into the puzzle: Grid 02")
 	}
 }
 
 func ExampleParseGrid() {
-	Display(parseGrid(grid2))
+	Display(ParseGrid(grid2))
 	// Output:
 	// 4       1679    12679   |139     2369    269     |8       1239    5
 	// 26789   3       1256789 |14589   24569   245689  |12679   1249    124679
@@ -189,7 +189,7 @@ func BenchmarkSolveAll(b *testing.B) {
 				values := Solve(grid)
 				if !isSolved(values) {
 					b.Errorf("Failed to solve puzzle inside %s", bm.name)
-					Display(gridValues(grid))
+					Display(GridValues(grid))
 				}
 			}
 			b.N = len(bm.grids)
@@ -237,7 +237,7 @@ func TestRandomPuzzle2(t *testing.T) {
 		values[s] = digits
 	}
 
-	tmp := gridValues(badGrid)
+	tmp := GridValues(badGrid)
 	if tmp == nil {
 		t.Error("Failed to create the puzzle by grid!")
 		return
@@ -312,7 +312,7 @@ func BenchmarkRandomPuzzle(b *testing.B) {
 
 			b.Logf("Failed to solve the random puzzle: %s\n", v)
 			// Display(gridValues(v))
-			r := parseGrid(v)
+			r := ParseGrid(v)
 			if r == nil {
 				b.Errorf("Failed to generate random puzzle, which is not able to be parsed!")
 			} else {

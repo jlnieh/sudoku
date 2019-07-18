@@ -89,13 +89,13 @@ func init() {
 }
 
 // ################ Parse a Grid ################
-func parseGrid(grid string) ValuesType {
+func ParseGrid(grid string) ValuesType {
 	values := make(ValuesType, 81)
 	for s := 0; s < 81; s++ {
 		values[s] = digits
 	}
 
-	tmp := gridValues(grid)
+	tmp := GridValues(grid)
 	if tmp == nil {
 		return nil
 	}
@@ -107,7 +107,7 @@ func parseGrid(grid string) ValuesType {
 	return values
 }
 
-func gridValues(grid string) ValuesType {
+func GridValues(grid string) ValuesType {
 	chars := make([]string, 0, 81)
 	for _, c := range grid {
 		if (c >= '0' && c <= '9') || (c == '.') {
@@ -218,7 +218,7 @@ func search(values ValuesType) ValuesType {
 
 // Solve the sudoku puzzle
 func Solve(grid string) ValuesType {
-	return search(parseGrid(grid))
+	return search(ParseGrid(grid))
 }
 
 // Display the 2-D sudoku puzzle
