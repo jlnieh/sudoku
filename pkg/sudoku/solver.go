@@ -128,7 +128,7 @@ func GridValues(grid string) ValuesType {
 
 func assign(values ValuesType, s int, d string) ValuesType {
 	// fmt.Println("AI: ", s, d, values[s])
-	otherValues := strings.ReplaceAll(values[s], d, "")
+	otherValues := strings.Replace(values[s], d, "", 1)
 	for _, d2 := range otherValues {
 		if nil == eliminate(values, s, string(d2)) {
 			return nil
@@ -144,7 +144,7 @@ func eliminate(values ValuesType, s int, d string) ValuesType {
 		// fmt.Println("Ea: ", s, d, values[s])
 		return values // Already eliminated
 	}
-	values[s] = strings.ReplaceAll(values[s], d, "")
+	values[s] = strings.Replace(values[s], d, "", 1)
 
 	// (1) If a square s is reduced to one value d2, then eliminate d2 from the peers.
 	if len(values[s]) == 0 {

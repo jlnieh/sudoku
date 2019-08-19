@@ -5,7 +5,7 @@
   "author": "JL Nieh",
   "main": "main.js",
   "scripts": {
-    "start": "./sudoku"
+    "start": "go build && ./sudoku"
   },
   "engines": {
     "node": "10.15.x"
