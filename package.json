@@ -5,13 +5,13 @@
     "author": "JL Nieh",
     "main": "main.js",
     "scripts": {
-      "start": "go build && ./sudoku"
+      "start": "./sudoku"
     },
     "engines": {
       "node": "6.10.x"
     },
     "repository": {
-      "url": "https://glitch.com/edit/#!/go-example"
+      "url": "https://glitch.com/edit/#!/jlnieh-sudoku"
     },
     "license": "MIT",
     "keywords": [
