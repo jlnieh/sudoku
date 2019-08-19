@@ -1,22 +1,22 @@
 {
-    "name": "sudoku",
-    "version": "0.0.1",
-    "description": "Project to test how to use Go on Gltich",
-    "author": "JL Nieh",
-    "main": "main.js",
-    "scripts": {
-      "start": "./sudoku"
-    },
-    "engines": {
-      "node": "6.10.x"
-    },
-    "repository": {
-      "url": "https://glitch.com/edit/#!/jlnieh-sudoku"
-    },
-    "license": "MIT",
-    "keywords": [
-      "node",
-      "glitch",
-      "go"
-    ]
+  "name": "sudoku",
+  "version": "0.0.1",
+  "description": "Project to test how to use Go on Gltich",
+  "author": "JL Nieh",
+  "main": "main.js",
+  "scripts": {
+    "start": "./sudoku"
+  },
+  "engines": {
+    "node": "10.15.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/jlnieh-sudoku"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "go"
+  ]
 }
