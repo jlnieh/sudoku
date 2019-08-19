@@ -1,0 +1,11 @@
+{
+    "restart": {
+        "exclude": [
+            "^web/"
+          ],
+        "include": [
+            "\\.go$"
+        ]
+    },
+    "throttle": 100
+  }

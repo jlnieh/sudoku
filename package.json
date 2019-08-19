@@ -1,0 +1,22 @@
+{
+    "name": "sudoku",
+    "version": "0.0.1",
+    "description": "Project to test how to use Go on Gltich",
+    "author": "JL Nieh",
+    "main": "main.js",
+    "scripts": {
+      "start": "go build && ./sudoku"
+    },
+    "engines": {
+      "node": "6.10.x"
+    },
+    "repository": {
+      "url": "https://glitch.com/edit/#!/go-example"
+    },
+    "license": "MIT",
+    "keywords": [
+      "node",
+      "glitch",
+      "go"
+    ]
+}
